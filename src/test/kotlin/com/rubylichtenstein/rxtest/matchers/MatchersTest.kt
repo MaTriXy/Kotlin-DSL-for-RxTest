@@ -8,385 +8,359 @@ import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.TestScheduler
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.ReplaySubject
-import junit.framework.Assert.assertNotNull
-import org.junit.Test
+import junit.framework.TestCase.assertNotNull
+import org.jetbrains.spek.api.Spek
+import org.jetbrains.spek.api.dsl.describe
+import org.jetbrains.spek.api.dsl.it
+import org.jetbrains.spek.api.dsl.on
 import java.util.concurrent.TimeUnit
 
+class MatchersTest : Spek({
+    describe("") {
 
-class MatchersTest {
+        val item0 = "a"
+        val item1 = "b"
+        val item2 = "c"
 
-    val item0 = "a"
-    val item1 = "b"
-    val item2 = "c"
+        val items = listOf(item0, item1, item2)
 
-    val items = listOf(item0, item1, item2)
-
-    fun shouldThrowAssertionError(function: () -> Unit) {
-        val assertionError = getAssertionError { function() }
-        assertNotNull(assertionError)
-    }
-
-    fun getAssertionError(function: () -> Unit): AssertionError? {
-        return try {
-            function.invoke()
-            null
-        } catch (assertionError: AssertionError) {
-            return assertionError
-        }
-    }
-
-    @Test
-    fun shouldThrowAssertionErrorTest() {
-
-    }
-
-    @Test
-    fun completeTest() {
-        Maybe.just("")
-                .test {
-                    it should complete()
-                }
-
-        Single.just("")
-                .test {
-                    it should complete()
-                }
-
-        Completable.complete()
-                .test {
-                    it should complete()
-                }
-
-        Observable.just("hello")
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .test {
-                    it should complete()
-                }
-
-        shouldThrowAssertionError {
-            PublishSubject.create<String>()
+        it("should complete") {
+            Maybe.just("")
                     .test {
                         it should complete()
                     }
-        }
-    }
 
-    @Test
-    fun notCompleteTest() {
-        PublishSubject.create<String>()
-                .test {
-                    it should notComplete()
-                }
-
-        shouldThrowAssertionError {
-            PublishSubject.create<String>()
+            Single.just("")
                     .test {
                         it should complete()
                     }
-        }
-    }
 
-    @Test
-    fun errorTest1() {
-        val assertionError = AssertionError()
+            Completable.complete()
+                    .test {
+                        it should complete()
+                    }
+            Observable.just("hello")
+                    .toFlowable(BackpressureStrategy.BUFFER)
+                    .test {
+                        it should complete()
+                    }
 
-        PublishSubject.create<String>()
-                .apply {
-                    onError(assertionError)
-                }
-                .test {
-                    it shouldHave error(assertionError)
-                }
-    }
-
-    @Test
-    fun errorTest2() {
-        val assertionError = AssertionError()
-
-        PublishSubject.create<String>()
-                .apply {
-                    onError(assertionError)
-                }
-                .test {
-                    it shouldHave error(AssertionError::class.java)
-                }
-    }
-
-    @Test
-    fun errorTest() {
-        val assertionError = AssertionError()
-
-        PublishSubject.create<String>()
-                .apply {
-                    onError(assertionError)
-                }
-                .test {
-                    it shouldHave error(Predicate { it == assertionError })
-                }
-    }
-
-    @Test
-    fun noErrorTest() {
-        PublishSubject.create<String>()
-                .test {
-                    it shouldHave noErrors()
-                }
-    }
-
-    @Test
-    fun valueTest() {
-        val to = TestObserver<String>()
-        val publishSubject = PublishSubject.create<String>()
-        val value = "a"
-        publishSubject.subscribe(to)
-        publishSubject.onNext(value)
-
-        to.assertValue(value)
-        to shouldHave value(value)
-        to shouldEmit value
-
-        val valuePredicate = Predicate { v: String -> v.length == 1 }
-        to.assertValue(valuePredicate)
-        to shouldHave value(valuePredicate)
-        to shouldEmit valuePredicate
-    }
-
-    @Test
-    fun valueAtTest() {
-        val to = TestObserver<String>()
-        val publishSubject = PublishSubject.create<String>()
-        val value0 = "a"
-        val value1 = "b"
-        publishSubject.subscribe(to)
-        publishSubject.onNext(value0)
-        publishSubject.onNext(value1)
-
-        to.assertValueAt(0, value0)
-        to.assertValueAt(1, value1)
-
-        to shouldHave valueAt(0, value0)
-        to shouldHave valueAt(1, value1)
-
-        to.assertValueAt(0, Predicate { value -> value == value0 })
-        to.assertValueAt(1, Predicate { value -> value == value1 })
-
-        to shouldHave valueAt(0, Predicate { value -> value == value0 })
-        to shouldHave valueAt(1, Predicate { value -> value == value1 })
-    }
-
-    @Test
-    fun valuesTest() {
-        val to = TestObserver<String>()
-        val publishSubject = PublishSubject.create<String>()
-        val value0 = "a"
-        val value1 = "b"
-        publishSubject.subscribe(to)
-        publishSubject.onNext(value0)
-        publishSubject.onNext(value1)
-
-        to.assertValues(value0, value1)
-        to shouldHave values(value0, value1)
-        to shouldEmit values(value0, value1)
-    }
-
-
-    @Test
-    fun valueSequenceTest() {
-        val valueSequence = listOf(item0, item1, item2)
-        Observable.fromIterable(valueSequence)
-                .test {
-                    it.assertValueSequence(valueSequence)
-                    it shouldEmit valueSequence(valueSequence)
-                }
-    }
-
-    @Test
-    fun valueSetTest() {
-        val valueSequence = listOf(item0, item1, item2)
-        Observable.fromIterable(valueSequence)
-                .test {
-                    it.assertValueSet(valueSequence)
-                    it shouldEmit valueSet(valueSequence)
-                }
-    }
-
-    @Test
-    fun valueOnly() {
-        val replaySubject = ReplaySubject.create<String>()
-        replaySubject.onNext(item0)
-        replaySubject.onNext(item1)
-        replaySubject.onNext(item2)
-
-        replaySubject.test {
-            it.assertValuesOnly(item0, item1, item2)
-            it shouldEmit valueOnly(item0, item1, item2)
-        }
-    }
-
-    @Test
-    fun neverTest() {
-        val to = TestObserver<String>()
-        val publishSubject = PublishSubject.create<String>()
-        val value = "a"
-        val never = "b"
-        val valuePredicate = Predicate { v: String -> v.equals(never) }
-
-        publishSubject.subscribe(to)
-        publishSubject.onNext(value)
-
-        to.assertNever(never)
-        to shouldHave never(never)
-        to shouldNeverEmit never
-
-        to.assertNever(valuePredicate)
-        to shouldHave never(valuePredicate)
-        to shouldNeverEmit valuePredicate
-    }
-
-    @Test
-    fun emptyTest() {
-        PublishSubject.create<String>()
-                .apply {
-                    subscribe({})
-                }
-                .test {
-                    it.assertEmpty()
-                    it shouldBe empty()
-                }
-    }
-
-    @Test
-    fun failure0Test() {
-        val value0 = "a"
-        val value1 = "b"
-        val errorMessage = "Error"
-        val error = Throwable(errorMessage)
-        ReplaySubject.create<String>()
-                .also {
-                    it.onNext(value0)
-                    it.onNext(value1)
-                    it.onError(error)
-                }
-                .test {
-                    it.assertFailure(Throwable::class.java, value0, value1)
-                    it shouldHave failure(Throwable::class.java, value0, value1)
-                }
-    }
-
-    @Test
-    fun failure1Test() {
-        val value0 = "a"
-        val value1 = "b"
-        val errorMessage = "Error"
-        val error = Throwable(errorMessage)
-        ReplaySubject.create<String>()
-                .also {
-                    it.onNext(value0)
-                    it.onNext(value1)
-                    it.onError(error)
-                }
-                .test {
-                    it.assertFailure(Predicate { true }, value0, value1)
-                    it shouldHave failure(Predicate { true }, value0, value1)
-                }
-    }
-
-    @Test
-    fun failureAndMessageTest() {
-        val value0 = "a"
-        val value1 = "b"
-        val errorMessage = "Error"
-        val error = Throwable(errorMessage)
-        ReplaySubject.create<String>()
-                .also {
-                    it.onNext(value0)
-                    it.onNext(value1)
-                    it.onError(error)
-                }
-                .test {
-                    it.assertFailureAndMessage(Throwable::class.java, errorMessage, value0, value1)
-                    it shouldHave failureAndMessage(Throwable::class.java, errorMessage, value0, value1)
-                }
-    }
-
-    @Test
-    fun resultTest() {
-        val value0 = "a"
-        val value1 = "b"
-        val values = listOf(value0, value1)
-        Observable.just(values)
-                .test {
-                    it.assertResult(values)
-                    it shouldHave result(values)
-                }
-    }
-
-    @Test
-    fun subscribeTest() {
-        val value0 = "a"
-        Observable.just(value0).apply {
-            subscribe({ })
-            test {
-                it.assertSubscribed()
-                it should subscribed()
+            shouldThrowAssertionError {
+                PublishSubject.create<String>()
+                        .test {
+                            it should complete()
+                        }
             }
         }
-    }
 
-    @Test
-    fun valueCountTest() {
-        Observable.fromIterable(items)
-                .test {
-                    it.assertValueCount(items.size)
-                    it shouldHave valueCount(items.size)
+        it("should not complete") {
+            PublishSubject.create<String>()
+                    .test {
+                        it should notComplete()
+                    }
+
+            shouldThrowAssertionError {
+                PublishSubject.create<String>()
+                        .test {
+                            it should complete()
+                        }
+            }
+        }
+
+        it("should have error obj") {
+            val assertionError = AssertionError()
+
+            PublishSubject.create<String>()
+                    .apply {
+                        onError(assertionError)
+                    }
+                    .test {
+                        it shouldHave error(assertionError)
+                    }
+        }
+
+        it("should have error type") {
+            PublishSubject.create<String>()
+                    .apply {
+                        onError(AssertionError())
+                    }
+                    .test {
+                        it shouldHave error(AssertionError::class.java)
+                    }
+        }
+
+        it("should have error predicate") {
+            val assertionError = AssertionError()
+            PublishSubject.create<String>()
+                    .apply {
+                        onError(assertionError)
+                    }
+                    .test {
+                        it shouldHave error(Predicate { it == assertionError })
+                    }
+        }
+
+        it("should have no errors") {
+            PublishSubject.create<String>()
+                    .test {
+                        it shouldHave noErrors()
+                    }
+        }
+
+        on("value") {
+            val value = "a"
+            val obs = Observable.just(value)
+
+            it("should have first value") {
+                obs.test {
+                    it shouldHave value(value)
                 }
-    }
+            }
 
-    @Test
-    fun terminateTest() {
-        Observable.just(item0)
-                .test {
-                    it.assertTerminated()
-                    it should terminate()
+            it("should emit first value") {
+                obs.test {
+                    it shouldEmit value
                 }
+            }
 
-        Observable.error<String>(Throwable())
-                .test {
-                    it.assertTerminated()
-                    it should terminate()
+            it("should have first predicate value") {
+                obs.test {
+                    it shouldHave value(Predicate { it == value })
                 }
-    }
+            }
 
-    @Test
-    fun timeoutTest() {
-        val scheduler = TestScheduler()
-
-        Observable
-                .interval(100, TimeUnit.MILLISECONDS, scheduler)
-                .test {
-                    it.await(50, TimeUnit.MILLISECONDS)
-                    it shouldHave timeout()
+            it("should emit first predicate value") {
+                obs.test {
+                    it shouldEmit Predicate { it == value }
                 }
-    }
+            }
+        }
 
-    @Test
-    fun noTimeoutTest() {
-        val scheduler = TestScheduler()
+        on("should have value at") {
+            val value0 = "a"
+            val value1 = "b"
+            val obs by memoized {
+                Observable.just(value0, value1)
+            }
 
-        Observable
-                .interval(100, TimeUnit.MILLISECONDS, scheduler)
-                .test {
-                    it shouldHave noTimeout()
+            it("with obj") {
+                obs.test {
+                    it shouldHave valueAt(0, value0)
+                    it shouldHave valueAt(1, value1)
                 }
-    }
+            }
 
-    @Test
-    fun notSubscribedTest() {
-        TestObserver<String>()
-                .apply {
-                    should(notSubscribed())
+            it("with predicate") {
+                obs.test {
+                    it shouldHave valueAt(0, Predicate { value -> value == value0 })
+                    it shouldHave valueAt(1, Predicate { value -> value == value1 })
                 }
+            }
+        }
+
+        on("should have values") {
+            val value0 = "a"
+            val value1 = "b"
+            val obs by memoized {
+                Observable.just(value0, value1)
+            }
+
+            it("have") {
+                obs.test {
+                    it shouldHave values(value0, value1)
+                }
+            }
+
+            it("emit") {
+                obs.test {
+                    it shouldEmit values(value0, value1)
+
+                }
+            }
+        }
+
+        on("values") {
+            val valueSequence = listOf(item0, item1, item2)
+            val obs = Observable.fromIterable(valueSequence)
+
+            it("valueSequenceTest") {
+                obs.test {
+                    it shouldEmit valueSequence(valueSequence)
+                }
+            }
+
+            it("valueSetTest") {
+                obs.test {
+                    it shouldEmit valueSet(valueSequence)
+                }
+            }
+
+            it("value Only") {
+                ReplaySubject.create<String>()
+                        .also {
+                            it.onNext(item0)
+                            it.onNext(item1)
+                            it.onNext(item2)
+                        }
+                        .test {
+                            it shouldEmit valueOnly(item0, item1, item2)
+                        }
+            }
+        }
+
+        on("never") {
+            val value = "a"
+            val never = "b"
+            val obs = Observable.just(value)
+
+            val valuePredicate = Predicate { v: String -> v == never }
+
+            it("should never") {
+                obs.test {
+                    it should never(never)
+                }
+            }
+
+            it("should never emit") {
+                obs.test {
+                    it shouldNeverEmit never
+                }
+            }
+
+            it("should never predicate") {
+                obs.test {
+                    it should never(valuePredicate)
+                }
+            }
+
+            it("should never") {
+                obs.test {
+                    it shouldNeverEmit valuePredicate
+                }
+            }
+        }
+
+        it("emptyTest") {
+            PublishSubject.create<String>()
+                    .test {
+                        it shouldBe empty()
+                    }
+        }
+
+        on("failure") {
+            val value0 = "a"
+            val value1 = "b"
+            val errorMessage = "Error"
+            val error = Throwable(errorMessage)
+
+            val obs = ReplaySubject.create<String>()
+                    .also {
+                        it.onNext(value0)
+                        it.onNext(value1)
+                        it.onError(error)
+                    }
+
+            it("failure by class") {
+                obs.test {
+                    it shouldHave failure(Throwable::class.java, value0, value1)
+                }
+            }
+
+            it("failure by predicate") {
+                obs.test {
+                    it shouldHave failure(Predicate { true }, value0, value1)
+                }
+            }
+
+            it("failureAndMessageTest") {
+
+                obs.test {
+                    it shouldHave failureAndMessage(Throwable::class.java, errorMessage, value0, value1)
+                }
+            }
+        }
+
+        it("resultTest") {
+            val value0 = "a"
+            val value1 = "b"
+            val values = listOf(value0, value1)
+            Observable.just(values)
+                    .test {
+                        it shouldHave result(values)
+                    }
+        }
+
+        it("subscribeTest") {
+            val value0 = "a"
+            Observable.just(value0)
+                    .apply {
+                        subscribe({ })
+                        test {
+                            it should subscribed()
+                        }
+                    }
+        }
+
+        it("valueCountTest") {
+            Observable.fromIterable(items)
+                    .test {
+                        it shouldHave valueCount(items.size)
+                    }
+        }
+
+        it("terminateTest") {
+            Observable.just(item0)
+                    .test {
+                        it should terminate()
+                    }
+
+            Observable.error<String>(Throwable())
+                    .test {
+                        it should terminate()
+                    }
+        }
+
+        it("timeoutTest") {
+            val scheduler = TestScheduler()
+
+            Observable
+                    .interval(100, TimeUnit.MILLISECONDS, scheduler)
+                    .test {
+                        it.await(50, TimeUnit.MILLISECONDS)
+                        it shouldHave timeout()
+                    }
+        }
+
+        it("noTimeoutTest") {
+            val scheduler = TestScheduler()
+
+            Observable
+                    .interval(100, TimeUnit.MILLISECONDS, scheduler)
+                    .test {
+                        it shouldHave noTimeout()
+                    }
+        }
+
+        it("notSubscribedTest") {
+            TestObserver<String>()
+                    .apply {
+                        should(notSubscribed())
+                    }
+        }
     }
+})
+
+fun shouldThrowAssertionError(function: () -> Unit) {
+    val assertionError = getAssertionError { function() }
+    assertNotNull(assertionError)
 }
 
 
+fun getAssertionError(function: () -> Unit): AssertionError? {
+    return try {
+        function.invoke()
+        null
+    } catch (assertionError: AssertionError) {
+        return assertionError
+    }
+}

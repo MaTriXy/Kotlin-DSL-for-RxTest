@@ -1,8 +1,9 @@
 package com.rubylichtenstein.rxtest.matchers
 
-import com.rubylichtenstein.rxtest.assertions.*
+import com.rubylichtenstein.rxtest.assertions.should
+import com.rubylichtenstein.rxtest.assertions.shouldEmit
+import com.rubylichtenstein.rxtest.assertions.shouldHave
 import com.rubylichtenstein.rxtest.extentions.test
-
 import io.reactivex.Observable
 import io.reactivex.observers.BaseTestConsumer
 import io.reactivex.observers.TestObserver
@@ -15,7 +16,9 @@ import org.junit.runners.JUnit4
 @RunWith(JUnit4::class)
 class CreateMatcherTest {
 
-    fun <T, U : BaseTestConsumer<T, U>> noValues() = valueCount<T, U>(0)
+
+    fun <T, U : BaseTestConsumer<T, U>> noValues()
+            = valueCount<T, U>(0)
 
     fun <T, U : BaseTestConsumer<T, U>> errorOrComplete(error: Throwable)
             = error<T, U>(error) or complete()
@@ -45,16 +48,12 @@ class CreateMatcherTest {
 
                     }
 
-                    try {
-                        it shouldHave (valueCountBetween<String, TestObserver<String>>(0, 3) or values("", ""))
-                    } catch (e: AssertionError) {
-
-                    }
+                    it shouldHave (valueCountBetween<String, TestObserver<String>>(0, 3) or values("", ""))
                 }
     }
 
     @Test
-    fun composeTest() {
+    fun createMatcherTest() {
 
         val values = listOf<String>("Rx", "Kotlin", "Test")
         Observable.fromIterable(values)
