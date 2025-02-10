@@ -1,9 +1,10 @@
-# RxTest &middot; <img src="https://github.com/RubyLichtenstein/RxTest/blob/master/art/kotlin_logo.png" alt="kotlin-logo" height="28" width="28"> + <img src="https://github.com/RubyLichtenstein/RxTest/blob/master/art/rx_logo.png" alt="rx-logo" height="34" width="34">
-[![Build Status](https://travis-ci.org/RubyLichtenstein/RxTest.svg?branch=master)](https://travis-ci.org/RubyLichtenstein/RxTest) [![codecov](https://codecov.io/gh/RubyLichtenstein/RxTest/branch/master/graph/badge.svg)](https://codecov.io/gh/RubyLichtenstein/RxTest) [![Download](https://api.bintray.com/packages/rubylichtenstein/RxTest/com.rubylichtenstein.rxtest/images/download.svg)](https://bintray.com/rubylichtenstein/RxTest/com.rubylichtenstein.rxtest/_latestVersion) [![Kotlin version badge](https://img.shields.io/badge/kotlin-1.2.21-blue.svg)](http://kotlinlang.org/) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/RxTest/) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-RxTest-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/6647)
+kotlin|Rx
+|:---:|:---:|
+<img src="https://github.com/RubyLichtenstein/RxTest/blob/master/art/kotlin_logo.png" alt="kotlin-logo" height="28" width="28"> | <img src="https://github.com/RubyLichtenstein/RxTest/blob/master/art/rx_logo.png" alt="rx-logo" height="34" width="34">
 
+# RxTest - Kotlin DSL for easier RxJava testing.
 
-
-RxTest is a Kotlin library for testing RxJava.
+[![Build Status](https://travis-ci.org/RubyLichtenstein/RxTest.svg?branch=master)](https://travis-ci.org/RubyLichtenstein/RxTest) [![codecov](https://codecov.io/gh/RubyLichtenstein/RxTest/branch/master/graph/badge.svg)](https://codecov.io/gh/RubyLichtenstein/RxTest) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/76c9a506c121408fabc7cf282d22109e)](https://www.codacy.com/app/reuven.lichtenstein/RxTest?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=RubyLichtenstein/RxTest&amp;utm_campaign=Badge_Grade) [![Download](https://api.bintray.com/packages/rubylichtenstein/RxTest/com.rubylichtenstein.rxtest/images/download.svg)](https://bintray.com/rubylichtenstein/RxTest/com.rubylichtenstein.rxtest/_latestVersion) [![Kotlin version badge](https://img.shields.io/badge/kotlin-1.2.21-blue.svg)](http://kotlinlang.org/) [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0) [![Gitter chat](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/RxTest/) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-RxTest-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/6647)
 
 #### Main features 
 * **Clear tests:** write clean, readable and simple tests in scala-test '*should* style'.
@@ -38,7 +39,7 @@ Observable.just("Hello RxTest!")
 - #### Gradle
 ```groovy
 dependencies {       
-    testImplementation 'com.rubylichtenstein:rxtest:1.0.6'
+    testImplementation 'com.rubylichtenstein:rxtest:1.0.7'
 }
 ```
 
@@ -47,10 +48,15 @@ dependencies {       
 <dependency>
     <groupId>com.rubylichtenstein</groupId>
     <artifactId>rxtest</artifactId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
     <type>pom</type>
 </dependency>
 ```
+## Mentions
+
+[![androidweekly](https://img.shields.io/badge/androidweekly.net-298-orange.svg?style=flat-square)](http://androidweekly.net/issues/issue-298) 
+[![androidweekly](https://img.shields.io/badge/androidweekly.cn-161-orange.svg?style=flat-square)](https://androidweekly.cn/android-dev-weekly-issue-161/)
+
 ## Bugs and Feedback
 
 For bugs, questions and discussions please use the [Github Issues](https://github.com/RubyLichtenstein/RxTest/issues).
